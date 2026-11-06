@@ -1,33 +1,45 @@
-version: "3"
-services:
-  # Web App in Python
+# Specify docker version
+version : "3"
+
+# to define any service, basically any container we want to run
+services: 
+  # Web app in Python
   web:
+    # Trigger builded image "Dockerfile"
     build: .
+    # Define the ports we want to bind
     ports:
-      - 8081:80 # Runnin on port 8081 -> localhost:8081/hits
+      - 8000:8000
+    # Use specific volumes, left host path and right the container path
     volumes:
-      - .:/app # If you change the code, it's live reloading the project
-      - application-logs:/app/logs/ # Connection with persistent volume defined line 31
+      # . means here, so in this case this folder get replicated on the container
+      - .:/app
+      - application-logs:/app/logs
+    # Use specific network
     networks:
-      - my-network # Connect to the network bridge defined line 26
+      - my-network
+    # Create environment variable
     environment:
-      - REDIS_HOST=redis-db # Allow to inject value from outside the container
+      - REDIS_HOST=redis-db
+    # waits for redis-db to be up and running
     depends_on:
-      - redis-db # Waits fot eh redis-db container to be up and running
-
-  # The database
-  redis-db: 
-    image: "redis:7-alpine" # Based on this image
+      - redis-db
+  # Create a new Service
+  redis-db:
+    # Here in this case we use image instead of build since we take a existing build from Docker library
+    image: "redis:7-alpine"
     volumes:
-      - redis-data:/data # Storing data persistently to the volume defined line 32
+      - redis-data:/data
     networks:
-      - my-network # Connect to the bridge network line 26
-
-networks:
+      - my-network
+    
+# Define networks
+networks :
   my-network:
-    driver: bridge # https://docs.docker.com/engine/network/drivers/
+    # Type of network
+    driver: bridge
 
+# define volumes
 volumes:
-  application-logs:
-  redis-data:
-
+  application-logs: 
+  redis-data: 
