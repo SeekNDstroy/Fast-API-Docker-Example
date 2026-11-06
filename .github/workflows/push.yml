@@ -36,7 +36,7 @@ jobs:
       # 4. Run the tests
       - name: Run test with pytest
         run: |
-          pytests
+          pytest
 
   push-to-repo:
     runs-on: ubuntu-latest
